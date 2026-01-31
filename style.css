@@ -1,0 +1,406 @@
+:root {
+    --background: rgb(210, 210, 200);
+    --background-text: rgb(50, 50, 50);
+    --hovered-background: rgba(250, 250, 250, 0.5);
+    --hovered-background-text: rgb(10, 10, 10);
+    --active-background-text: rgb(150, 150, 150);
+    --transparent-background: rgba(210, 210, 210, 0.5);
+    --scale: 0.75;
+    --margin: calc(3.125rem * ((1 - var(--scale)) / 2));
+    --transition:  0.25s, scale 0.25s cubic-bezier(.49,1.64,.82,1.65), left 0.35s cubic-bezier( 0.67, 1.87, 0.42, 0.77 ), right 0.35s cubic-bezier( 0.67, 1.87, 0.42, 0.77 ), height 0.25s cubic-bezier(.49,1.64,.82,1.65);
+    --radius: 1.25rem;
+    --pannel-padding: 0px;
+    --blur-amount: 5px;
+    --shadow: rgb(150, 150, 150);
+    --shadow-weight: 10px;
+    --max-tab-width: 1000rem;
+    --min-tab-width: 2rem;
+}
+@media (hover:none) {
+    html {
+        font-size: 112%;
+    }
+}
+body * {
+    -webkit-tap-highlight-color: transparent;
+}
+@media (hover:hover){
+    .button:hover {
+        --colour: var(--hovered-background-text);
+        background: var(--hovered-background);
+    }
+    #search-bar:hover {
+        background: var(--hovered-background);
+        --colour: var(--hovered-background-text);
+    }
+    .tab:hover {
+        background: var(--hovered-background);
+        color: var(--hovered-background-text);
+    }
+}
+body {
+    background: var(--background);
+    color: var(--background-text);
+    position: absolute;
+    left: 0px;
+    top: 0px;
+    width: 100%;
+    height: 100%;
+    margin: 0px;
+    padding: 0px;
+}
+#pannels {
+    width: calc(100% - var(--margin) * 2);
+    height: calc(6.25rem - var(--margin));
+    box-sizing: border-box;
+    position: absolute;
+    left: var(--margin);
+    top: var(--margin);
+    background: var(--transparent-background);
+    padding: var(--pannel-padding);
+    border-radius: var(--radius);
+}
+#top-bar {
+    display: flex;
+    flex-direction: row;
+    justify-content: space-between;
+    white-space: var(--margin);
+    gap: var(--margin);
+}
+.button {
+    width: calc(3.125rem * var(--scale));
+    height: calc(3.125rem * var(--scale));
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    cursor: pointer;
+    border-radius: calc(var(--radius) * var(--scale));
+    transition: var(--transition);
+    position: relative;
+    flex-grow: 0;
+    flex-shrink: 0;
+    --colour: var(--background-text);
+    --current-transition: var(--transition);
+    overflow: hidden;
+}
+.button * {
+    transition: var(--current-transition);
+    stroke: var(--colour);
+    border-color: var(--colour);
+    color: var(--colour);
+}
+.button:active {
+    transition: 0s;
+    scale: calc(0.9/var(--scale));
+    --colour: var(--active-background-text);
+    --current-transition: 0s;
+    background: var(--hovered-background);
+}
+#mock-search-bar {
+    width: 100%;
+    height: calc(3.125rem * var(--scale));
+    border-radius: calc(var(--radius) * var(--scale));
+    cursor: pointer;
+    transition: var(--transition);
+    position: relative;
+    font-family:'Times New Roman', Times, serif;
+    --colour: var(--background-text);
+    cursor: pointer;
+}
+#search-bar {
+    height: calc(3.125rem * var(--scale));
+    border-radius: calc(var(--radius) * var(--scale));
+    cursor: pointer;
+    transition: var(--transition);
+    position: relative;
+    font-family:'Times New Roman', Times, serif;
+    --colour: var(--background-text);
+    cursor: pointer;
+    position: absolute;
+    left: calc(6.25rem - var(--margin) * 2);
+    right: calc(6.25rem - var(--margin) * 2);
+    backdrop-filter: blur(var(--blur-amount));
+}
+#search-bar input {
+    width: 100%;
+    height: 100%;
+    padding: 0px;
+    margin: 0px;
+    background: transparent;
+    border: 0px;
+    border-radius: calc(var(--radius) * var(--scale));
+    display: flex;
+    text-align: center;
+    outline: none;
+    font-size: 1.25rem;
+    font-family:'Times New Roman', Times, serif;
+    cursor: pointer;
+}
+#search-bar input::placeholder {
+    opacity: 1;
+    color: var(--colour);
+    transition: var(--transition);
+}
+#search-bar input:focus::placeholder {
+    opacity: 0.5;
+}
+#search-bar:has(input:focus){
+    background: var(--hovered-background);
+    color: var(--hovered-background-text);
+    --colour: var(--hovered-background-text);
+    box-shadow: 0 3px var(--shadow-weight) var(--shadow);
+    cursor: text;
+}
+#search-bar input:focus {
+    cursor: text;
+}
+#pannel-icon, #compose-icon {
+    width: calc(3.125rem * var(--scale) * 0.6);
+    height: calc(3.125rem * var(--scale) * 0.6);
+    position: absolute;
+    outline: calc(0.09375rem * var(--scale)) solid var(--colour);
+    border-radius: calc(var(--radius) * var(--scale) * 0.6);
+    transform-origin: center center;
+    margin: 0px;
+}
+#pannel-icon::before {
+    content: "";
+    width: calc(0.09375rem * var(--scale));
+    height: 100%;
+    position: absolute;
+    left: 50%;
+    top: 0px;
+    background: var(--colour);
+    transition: var(--current-transition);
+}
+#line-holder {
+    width: 50%;
+    height: 100%;
+    clip-path: inset(calc(var(--margin) * 0.6 * var(--scale)) calc(var(--margin) * 0.6 * var(--scale)) calc(var(--margin) * 0.6 * var(--scale)) calc(var(--margin) * 0.6 * var(--scale)) round calc(var(--radius) * var(--scale)) 0 0 calc(var(--radius) * var(--scale)));
+}
+#line-holder div{
+    width: 100%;
+    height: calc(0.09375rem * var(--scale));
+    position: absolute;
+    background: var(--colour);
+    top: 0px;
+}
+#line-holder div:nth-of-type(1){
+    translate: 0 calc(3.125rem * var(--scale) * 0.6 * 0.25 - 0.75px);
+}
+#line-holder div:nth-of-type(2){
+    translate: 0 calc(3.125rem * var(--scale) * 0.6 * 0.5 - 0.75px);
+}
+#line-holder div:nth-of-type(3){
+    translate: 0 calc(3.125rem * var(--scale) * 0.6 * 0.75 - 0.75px);
+}
+#compose-icon {
+    clip-path: polygon(-100% -100%, -100% 200%, 200% 200%, 200% 25%, 75% 25%, 75% -100%, -100% -100%);
+}
+#pen-icon {
+    width: calc(0.09375rem * var(--scale));
+    height: 50%;
+    position: absolute;
+    left: calc(50% - 0.75px);
+    bottom: 50%;
+    background: var(--colour);
+    transition: var(--current-transition);
+    transform-origin: center bottom;
+    rotate: 45deg;
+}
+#new-tab div {
+    width: calc(100% * 0.6);
+    height: calc(0.09375rem * var(--scale));
+    background: var(--colour);
+    position: absolute;
+    left: 0px;
+    top: 0px;
+    translate: calc(3.125rem * var(--scale) / 2 - 3.125rem * var(--scale) * 0.3) calc(3.125rem * var(--scale) / 2 - 0.75px);
+}
+#new-tab div:nth-of-type(2){
+    transform-origin: center center;
+    rotate: 90deg;
+}
+#tab-bar {
+    display: flex;
+    flex-direction: row;
+    justify-content: stretch;
+    height: 3.125rem;
+    position: absolute;
+    width: 100%;
+    left: 0px;
+    top: calc(3.125rem - var(--margin));
+}
+.tab {
+    max-width: var(--max-tab-width);
+    min-width: var(--min-tab-width);
+    width: 100%;
+    margin-left: calc(var(--margin) / 2);
+    margin-right: calc(var(--margin) / 2);
+    flex-grow: 1;
+    flex-shrink: 1;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    height: calc(3.125rem * var(--scale));
+    border-radius: calc(var(--radius) * var(--scale));
+    cursor: pointer;
+    transition: var(--transition);
+    user-select:none;
+    -moz-user-select: none;
+    -webkit-user-select: none;
+    color: var(--background-text);
+    position: relative;
+    padding-left: calc(3.125rem * var(--scale) * 0.3);
+}
+.tab:active {
+    scale: 1.1;
+    transition: 0s;
+    color: var(--active-background-text);
+    background: var(--hovered-background);
+}
+.tab:first-of-type {
+    margin-left: 0px;
+}
+.tab:last-of-type {
+    margin-right: 0px;
+}
+.tab:active .favicon {
+    opacity: 0.5;
+}
+.tab span {
+    font-size: 1rem;
+}
+.favicon {
+    display: inline;
+    border-radius: calc(var(--radius) * var(--scale) * 0.4);
+    margin: 0px;
+    padding: 0px;
+    margin-right: calc(3.125rem * var(--scale) * 0.4 + var(--margin));
+    transition: inherit;
+    position: sticky;
+    scale: 0.75;
+    width: 1rem;
+    height: 1rem;
+}
+.favicon div {
+    transition: inherit;
+}
+.favicon div::before {
+    transition: inherit;
+}
+.timeline-favicon div {
+    width: 1rem;
+    height: 1rem;
+    position: absolute;
+    left: 0px;
+    top: 0px;
+    border-radius: calc(var(--radius) / 3.125);
+}
+.timeline-favicon div::before {
+    content: "";
+    position: absolute;
+    left: 0px;
+    top: 0px;
+    width: 100%;
+    height: calc(50% - var(--margin) * 0.16);
+    background: rgb(255, 64, 64);
+    border-top-left-radius: inherit;
+    border-top-right-radius: inherit;
+}
+.timeline-favicon div:nth-of-type(2){
+    scale: 1 -1;
+}
+.timeline-favicon div:nth-of-type(2)::before {
+    background:rgb(255, 150, 75);
+}
+.calendar-favicon div {
+    width: 1rem;
+    height: 1rem;
+    position: absolute;
+    left: 0px;
+    top: 0px;
+    border-radius: inherit;
+}
+.calendar-favicon div::before {
+    content: "";
+    width: calc(50% - var(--margin) * 0.16);
+    height: calc(50% - var(--margin) * 0.16);
+    background: rgb(255, 150, 75);
+    position: absolute;
+    left: 0px;
+    top: 0px;
+    border-top-left-radius: inherit;
+}
+.calendar-favicon div:nth-of-type(2){
+    scale: -1 1;
+}
+.calendar-favicon div:nth-of-type(3){
+    scale: 1 -1;
+}
+.calendar-favicon div:nth-of-type(2)::before{
+    background:rgb(255, 64, 64)
+}
+.calendar-favicon div:nth-of-type(3)::before{
+    background: rgb(240, 200, 0)
+}
+
+.todo-favicon {
+    overflow: visible;
+    clip-path: rect(0rem 0rem 1rem 1rem round calc(var(--radius) * var(--scale) * 0.4));
+    -webkit-clip-path: rect(0rem 0rem 1rem 1rem round calc(var(--radius) * var(--scale) * 0.4));
+    transform: translateZ(0);
+}
+.todo-favicon div {
+    position: absolute;
+    left: 0px;
+    top: 0px;
+    width: 1rem;
+    height: calc(1rem / 3 - var(--margin) * 0.16);
+    background: rgb(255, 64, 64);
+    overflow: visible;
+    border-radius: 50px;
+}
+.todo-favicon div:nth-of-type(2){
+    translate: 0 calc(3.125rem * var(--scale) * 0.4 / 2 - 50%);
+    background: rgb(255, 150, 75)
+}
+.todo-favicon div:nth-of-type(3){
+    translate: 0 calc(3.125rem * var(--scale) * 0.4 - 100%);
+    background: rgb(240, 200, 0)
+}
+.closetab {
+    width: calc(3.125rem * var(--scale));
+    height: calc(3.125rem * var(--scale));
+    position: absolute;
+    right: 0px;
+    top: 0px;
+    border-radius: calc(var(--radius) * var(--scale));
+    scale: 0.5;
+}
+.closetab::before {
+    width: 100%;
+    height: 0.09375rem * var(--scale);
+    background: var(--background-text);
+}
+.title {
+    width: 100%;
+    height: 1rem;
+    padding: 0px;
+    margin: 0px;
+    text-align: center;
+    transition: inherit;
+    font-size: 1rem;
+}
+@media screen and (max-width: 30rem){
+    #tab-bar {
+        display: none;
+    }
+    #search-bar:has(input:focus){
+        left: 0px;
+        right: 0px;
+    }
+}
+@media screen and (max-width: 15rem){
+
+}
