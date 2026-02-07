@@ -1,6 +1,7 @@
 :root {
     --highlight-colour: blue;
-    --background: color-mix(in oklab, white 95%, var(--highlight-colour) 5%);
+    --slider-highlight-colour: var(--highlight-colour);
+    --background: color-mix(in oklab, white 90%, var(--highlight-colour) 10%);
     --background-text: rgb(50, 50, 50);
     --hovered-background: color-mix(in oklab, white 40%, var(--highlight-colour) 10%);
     --hovered-background-text: rgb(10, 10, 10);
@@ -12,10 +13,22 @@
     --radius: 1.25rem;
     --pannel-padding: 0px;
     --blur-amount: 5px;
-    --shadow: rgb(150, 150, 150);
+    --shadow: color-mix(in oklab, black 10%, var(--background) 90%);
     --shadow-weight: 10px;
-    --max-tab-width: 1000rem;
+    --max-tab-width: 33%;
     --min-tab-width: 2rem;
+    --foreground: white;
+    --slider-height: 0.65rem;
+}
+.dark-mode {
+    --highlight-colour: blue;
+    --slider-highlight-colour: color-mix(in oklab, blue 25%, white 50%);
+    --background: color-mix(in oklab, black 65%, var(--highlight-colour) 35%);
+    --background-text: rgb(200, 200, 200);
+    --hovered-background: color-mix(in oklab, var(--background) 75%, white 25%);
+    --hovered-background-text: rgb(200, 200, 200);
+    --foreground: black;
+    
 }
 @media (hover:none) {
     html {
@@ -33,6 +46,7 @@ body * {
     #search-bar:hover {
         background: var(--hovered-background);
         --colour: var(--hovered-background-text);
+        backdrop-filter: blur(var(--blur-amount));
     }
     .tab:hover {
         background: var(--hovered-background);
@@ -57,9 +71,9 @@ body {
     position: absolute;
     left: var(--margin);
     top: var(--margin);
-    background: var(--transparent-background);
     padding: var(--pannel-padding);
     border-radius: var(--radius);
+    z-index: 1;
 }
 #top-bar {
     display: flex;
@@ -120,7 +134,6 @@ body {
     position: absolute;
     left: calc(6.25rem - var(--margin) * 2);
     right: calc(6.25rem - var(--margin) * 2);
-    backdrop-filter: blur(var(--blur-amount));
 }
 #search-bar input {
     width: 100%;
@@ -136,6 +149,7 @@ body {
     font-size: 1.25rem;
     font-family:'Times New Roman', Times, serif;
     cursor: pointer;
+    color: var(--colour);
 }
 #search-bar input::placeholder {
     opacity: 1;
@@ -151,6 +165,7 @@ body {
     --colour: var(--hovered-background-text);
     box-shadow: 0 3px var(--shadow-weight) var(--shadow);
     cursor: text;
+    backdrop-filter: blur(var(--blur-amount));
 }
 #search-bar input:focus {
     cursor: text;
@@ -231,6 +246,18 @@ body {
     width: 100%;
     left: 0px;
     top: calc(3.125rem - var(--margin));
+    z-index: 1;
+}
+#tabRound {
+    display: flex;
+    flex-direction: row;
+    justify-content: stretch;
+    height: 3.125rem;
+    position: absolute;
+    width: 100%;
+    left: 0px;
+    top: calc(3.125rem - var(--margin) );
+    z-index: 0;
 }
 .tab {
     max-width: var(--max-tab-width);
@@ -441,15 +468,39 @@ body {
     font-size: 1rem;
     white-space: nowrap;
 }
-@media screen and (max-width: 30rem){
-    #tab-bar {
-        display: none;
-    }
-    #search-bar:has(input:focus){
-        left: 0px;
-        right: 0px;
-    }
+#main {
+    position: absolute;
+    left: 0px;
+    bottom: 0px;
+    width: 100%;
+    height: calc(100% - 3.125rem + var(--shadow-weight));
+    overflow-x: scroll;
+    overflow-y: visible;
+    display: flex;
+    flex-shrink: 0;
+    flex-grow: 0;
+    scroll-snap-type: x mandatory;
+    scrollbar-width: 0;
 }
-@media screen and (max-width: 15rem){
-
+#main::-webkit-scrollbar {
+    display: none;
+}
+.screen {
+    width: 100vh;
+    min-width: 100vw;
+    scroll-snap-align: start;
+    position: relative;
+    filter: drop-shadow(0px 5px var(--shadow-weight) var(--shadow));
+    background: transparent;
+    scroll-snap-stop: always;
+}
+.screenContent {
+    position: absolute;
+    left: var(--margin);
+    top: calc(var(--shadow-weight));
+    border: none;
+    background: var(--foreground);
+    width: calc(100% - var(--margin) * 2);
+    height: calc(100% - var(--shadow-weight) - var(--margin));
+    border-radius: calc(var(--radius) * var(--scale)) calc(var(--radius) * var(--scale)) var(--radius) var(--radius);
 }
