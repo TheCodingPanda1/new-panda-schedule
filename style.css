@@ -1,6 +1,7 @@
 :root {
-    --highlight-colour: blue;
-    --slider-highlight-colour: var(--highlight-colour);
+    --highlight-colour: rgb(0, 0, 255);
+    --highlight-text: rgb(250, 250, 250);
+    --visible-highlight-colour: var(--highlight-colour);
     --background: color-mix(in oklab, white 90%, var(--highlight-colour) 10%);
     --background-text: rgb(50, 50, 50);
     --hovered-background: color-mix(in oklab, white 40%, var(--highlight-colour) 10%);
@@ -15,20 +16,37 @@
     --blur-amount: 5px;
     --shadow: color-mix(in oklab, black 10%, var(--background) 90%);
     --shadow-weight: 10px;
-    --max-tab-width: 33%;
+    --max-tab-width: 100%;
     --min-tab-width: 2rem;
     --foreground: white;
+    --foreground-text: black;
     --slider-height: 0.65rem;
+    --percent: 0%;
+    --transparent-foreground: rgba(255, 255, 255, 0.5);
 }
-.dark-mode {
+.dark-theme {
     --highlight-colour: blue;
-    --slider-highlight-colour: color-mix(in oklab, blue 25%, white 50%);
+    --visible-highlight-colour: color-mix(in oklab, blue 25%, white 50%);
     --background: color-mix(in oklab, black 65%, var(--highlight-colour) 35%);
     --background-text: rgb(200, 200, 200);
     --hovered-background: color-mix(in oklab, var(--background) 75%, white 25%);
     --hovered-background-text: rgb(200, 200, 200);
-    --foreground: black;
-    
+    --foreground: rgb(25, 25, 25);
+    --foreground-text: rgb(240, 240, 240);
+    --shadow: color-mix(in oklab, white 75%, var(--background) 25%);
+}
+@media (prefers-color-scheme: dark){
+    .device-theme {
+        --highlight-colour: blue;
+        --visible-highlight-colour: color-mix(in oklab, blue 25%, white 50%);
+        --background: color-mix(in oklab, black 65%, var(--highlight-colour) 35%);
+        --background-text: rgb(200, 200, 200);
+        --hovered-background: color-mix(in oklab, var(--background) 75%, white 25%);
+        --hovered-background-text: rgb(200, 200, 200);
+        --foreground: rgb(25, 25, 25);
+        --foreground-text: rgb(240, 240, 240);
+        --transparent-foreground: rgba(25, 25, 25, 0.5)
+    }
 }
 @media (hover:none) {
     html {
@@ -48,7 +66,7 @@ body * {
         --colour: var(--hovered-background-text);
         backdrop-filter: blur(var(--blur-amount));
     }
-    .tab:hover {
+    .tab:not(.selected):hover {
         background: var(--hovered-background);
         color: var(--hovered-background-text);
     }
@@ -111,11 +129,15 @@ body {
     --current-transition: 0s;
     background: var(--hovered-background);
 }
+.button:focus-visible {
+    border: 0px;
+    box-shadow: 0px 0px 0px 2px var(--highlight-colour);
+    outline: 0px;
+}
 #mock-search-bar {
     width: 100%;
     height: calc(3.125rem * var(--scale));
     border-radius: calc(var(--radius) * var(--scale));
-    cursor: pointer;
     transition: var(--transition);
     position: relative;
     font-family:'Times New Roman', Times, serif;
@@ -125,9 +147,7 @@ body {
 #search-bar {
     height: calc(3.125rem * var(--scale));
     border-radius: calc(var(--radius) * var(--scale));
-    cursor: pointer;
     transition: var(--transition);
-    position: relative;
     font-family:'Times New Roman', Times, serif;
     --colour: var(--background-text);
     cursor: pointer;
@@ -248,17 +268,6 @@ body {
     top: calc(3.125rem - var(--margin));
     z-index: 1;
 }
-#tabRound {
-    display: flex;
-    flex-direction: row;
-    justify-content: stretch;
-    height: 3.125rem;
-    position: absolute;
-    width: 100%;
-    left: 0px;
-    top: calc(3.125rem - var(--margin) );
-    z-index: 0;
-}
 .tab {
     max-width: var(--max-tab-width);
     min-width: var(--min-tab-width);
@@ -277,7 +286,16 @@ body {
     color: var(--background-text);
     position: relative;
 }
-.tab div:not(.tab div div):not(.closetab) {
+.futureSelected.tab {
+    transition: var(--transition), color 0s;
+    color: color-mix(in oklab, var(--foreground-text) var(--percent), var(--background-text));
+}
+.selected.tab {
+    cursor: default;
+    color: color-mix(in oklab, var(--foreground-text), var(--background-text) var(--percent));
+    transition: var(--transition), color 0s;
+}
+.tabContent {
     transition: inherit;
     width: 100%;
     height: 100%;
@@ -289,18 +307,17 @@ body {
     -webkit-mask-image: linear-gradient(to right, black calc(100% - var(--radius)), transparent);
     mask-repeat: no-repeat;
 }
-.tab:hover div:not(.tab div div):not(.closetab) {
+.tab:hover .tabContent{
     mask-position: top 0px right calc((3.125rem - var(--margin)) * var(--scale));
 }
-.tab::before {
-    width: 100%;
-    height: 100%;
-    background: linear-gradient(to right, )
-}
-.tab:active.tab:active:not(.tab:has(.closetab:active)) .title {
+.tab:not(.selected):active:not(.tab:has(.closetab:active)) .title {
     opacity: 0.375;
 }
-.tab:active:not(.tab:has(.closetab:active)) {
+.tab:focus-visible {
+    box-shadow: 0px 0px 0px 2px var(--highlight-colour);
+    outline: 0px;
+}
+.tab:not(.selected):active:not(.tab:has(.closetab:active)) {
     scale: 1.1;
     transition: 0s;
     background: var(--hovered-background);
@@ -355,7 +372,7 @@ body {
     scale: 1 -1;
 }
 .timeline-favicon div:nth-of-type(2)::before {
-    background:rgb(255, 150, 75);
+    background: rgb(255, 150, 75);
 }
 .calendar-favicon div {
     width: 1rem;
@@ -382,7 +399,7 @@ body {
     scale: 1 -1;
 }
 .calendar-favicon div:nth-of-type(2)::before{
-    background:rgb(255, 64, 64)
+    background: rgb(255, 64, 64);
 }
 .calendar-favicon div:nth-of-type(3)::before{
     background: rgb(240, 200, 0)
@@ -424,9 +441,10 @@ body {
     scale: var(--scale);
     transition: var(--transition);
     opacity: 0;
+    cursor: pointer;
 }
 .tab:hover .closetab {
-    opacity: 100;
+    opacity: 100%;
 }
 
 .closetab::before {
@@ -503,4 +521,135 @@ body {
     width: calc(100% - var(--margin) * 2);
     height: calc(100% - var(--shadow-weight) - var(--margin));
     border-radius: calc(var(--radius) * var(--scale)) calc(var(--radius) * var(--scale)) var(--radius) var(--radius);
+    overflow: hidden;
+    content-visibility: auto;
+    color: var(--foreground-text);
+}
+.scroller {
+    width: 100%;
+    height: 100%;
+    overflow: scroll;
+    position: absolute;
+    left: 0px;
+    top: 0px;
+}
+.scroller::before {
+    content: "";
+    position: relative;
+    height: 6.25rem;
+    display: inline-block;
+    width: 100%;
+}
+.spinner {
+    animation: spin 1.5s infinite;
+    display: block;
+}
+@keyframes spin {
+    0% {
+        rotate: 0deg;
+    }
+    40% {
+        scale: 0.75;
+    }
+    100% {
+        rotate: 360deg;
+        translate: 0 0;
+    }
+}
+.control-bar {
+    width: 100%;
+    height: calc(6.25rem - var(--margin));
+    position: absolute;
+    left: 0px;
+    top: 0px;
+    border-radius: calc(var(--radius) * var(--scale)) calc(var(--radius) * var(--scale)) var(--radius) var(--radius);
+    backdrop-filter: blur(var(--blur-amount));
+    z-index: 1;
+    background: var(--transparent-foreground);
+    display: flex;
+    justify-content: center;
+    align-items: last baseline;
+}
+@media (max-width: 500px){
+    #tab-bar {
+        display: none;
+    }
+    .screenContent{
+        clip-path: none !important;
+    }
+    .control-bar {
+        height: 3.125rem;
+    }
+}
+@keyframes tabGrow {
+    from {
+        flex-grow: 0;
+        min-width: 0;
+        width: 0;
+    }
+    to {
+        flex-grow: 1;
+    }
+}
+.contentLink {
+    height: 3.125rem;
+    display: flex;
+    align-items: center;
+    margin-top: 100%;
+    cursor: pointer;
+    position: relative;
+    margin-right: 1.5rem;
+}
+.contentLink:hover {
+    color: var(--visible-highlight-colour);
+    text-decoration: underline;
+}
+.contentLink:not(.contentLink:last-of-type)::before {
+    content: ">";
+    left: 100%;
+    width: 1.5rem;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    text-decoration: none;
+    color: var(--foreground-text);
+    position: absolute;
+}
+.control-search-bar {
+    width: 2rem;
+    height: 2rem;
+    position: relative;
+    display: block;
+    translate: 0 -0.5625rem;
+    scale: 0.75;
+}
+.control-search-bar::before {
+    content: "";
+    position: absolute;
+    left: 0px;
+    width: 1rem;
+    height: 1rem;
+    outline: 0.09375rem solid black;
+    top: 0.5rem;
+    border-radius: 50%;
+    display: block;
+    padding: 0px;
+    transform-origin: 1rem 0.5rem;
+    rotate: 45deg;
+}
+.control-search-bar::after {
+    content: "";
+    position: absolute;
+    left: 1rem;
+    top: 0.953125rem;
+    width: 1rem;
+    height: 0.09375rem;
+    background: var(--foreground-text);
+    transform-origin: 0px 0px;
+    rotate: 45deg;
+}
+.control-search-bar input {
+    padding: 0px;
+    border: none;
+    cursor: pointer;
 }
